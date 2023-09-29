@@ -2,6 +2,43 @@
 
 A collection of shell functions designed to streamline various Git tasks, from branch creation to merging.
 
+### Instructions to Add Functions to Zsh Profile
+
+1. Open your Zsh configuration file:
+
+\```bash
+nano ~/.zshrc
+\```
+
+2. Scroll to the end of the file, and paste the provided bash functions.
+
+3. Save and exit (for `nano`, press `CTRL + O` to save and `CTRL + X` to exit).
+
+4. Reload your Zsh configuration:
+
+\```bash
+source ~/.zshrc
+\```
+
+Now, you should have access to the functions directly from your terminal.
+
+### create_feature_branch()
+
+Create a new feature branch based on the 'dev' branch.
+
+**Usage:**
+\```bash
+create_feature_branch "new-feature-name"
+\```
+
+### create_fixes_branch()
+
+...
+
+...
+
+...
+
 ## Table of Contents
 
 - [1. create_feature_branch()](#create_feature_branch)
