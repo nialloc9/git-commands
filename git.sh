@@ -20,14 +20,21 @@ function create_docs_branch() {
 
 # Helper function to avoid code duplication
 function create_branch() {
-  prefix=$1
-  name=$2
 
-  # Argument validation
-  if [ -z "$name" ]; then
-    echo "Please provide a name for the branch."
-    return 1
-  fi
+  # Prompt the user for branch prefix
+  echo "Enter branch type (feature, fixes, refactor, docs):"
+  read prefix
+
+  # Check if the type is one of the allowed types
+    if [[ "$prefix" != "feature" && "$prefix" != "fixes" && "$prefix" != "refactor" && "$prefix" != "docs" ]]; then
+        echo "Invalid type. Please use one of 'feature', 'fixes', 'refactor', 'docs'."
+        return 1
+    fi
+
+
+  # Prompt the user for commit type
+  echo "Enter branch name:"
+  read name
 
   # Checkout the dev branch
   git checkout dev
@@ -77,4 +84,27 @@ function merge_dev_into_main() {
 
   # Merge the latest changes from dev into main
   git merge dev
+
+  git push origin main
+}
+
+function git_commit() {
+    # Prompt the user for commit type
+    echo "Enter commit type (feat, fixes, refactor):"
+    read type
+
+    # Check if the type is one of the allowed types
+    if [[ "$type" != "feat" && "$type" != "fixes" && "$type" != "refactor" ]]; then
+        echo "Invalid type. Please use one of 'feat', 'fixes', 'refactor'."
+        return 1
+    fi
+
+    # Prompt the user for commit message
+    echo "Enter commit message:"
+    read message
+
+    # Commit everything to git with the provided message
+    git add .
+    git commit -m "${type}:${message}"
+    git push
 }
