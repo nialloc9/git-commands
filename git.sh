@@ -51,7 +51,7 @@ function commit_push_merge_dev() {
   current_branch=$(git rev-parse --abbrev-ref HEAD)
 
   # Commit all changes in the current branch
-  git add . && git commit -m "Committing changes in $current_branch"
+  git_commit
 
   # Push the current branch to remote
   git push origin $current_branch
@@ -94,7 +94,7 @@ function git_commit() {
     read type
 
     # Check if the type is one of the allowed types
-    if [[ "$type" != "feat" && "$type" != "fixes" && "$type" != "refactor" ]]; then
+    if [[ "$type" != "feat" && "$type" != "fixes" && "$type" != "refactor" ]] then
         echo "Invalid type. Please use one of 'feat', 'fixes', 'refactor'."
         return 1
     fi
