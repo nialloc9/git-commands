@@ -1,48 +1,45 @@
 # Function to create a feature branch
 function create_feature_branch() {
-  create_branch "feature" $1
+  create_branch "feature"
 }
 
 # Function to create a fixes branch
 function create_fixes_branch() {
-  create_branch "fixes" $1
+  create_branch "fixes"
 }
 
 # Function to create a refactor branch
 function create_refactor_branch() {
-  create_branch "refactor" $1
+  create_branch "refactor"
 }
 
 # Function to create a docs branch
 function create_docs_branch() {
-  create_branch "docs" $1
+  create_branch "docs"
 }
 
-# Helper function to avoid code duplication
+# Helper function to create a branch
 function create_branch() {
 
-  # Prompt the user for branch prefix
-  prefix = $1
-
   # Check if the type is one of the allowed types
-    if [[ "$prefix" != "feature" && "$1" != "fixes" && "$1" != "refactor" && "$1" != "docs" ]]; then
-        echo "Invalid type. Please use one of 'feature', 'fixes', 'refactor', 'docs'."
-        return 1
-    fi
+  if [[ "$1" != "feature" && "$1" != "fixes" && "$1" != "refactor" && "$1" != "docs" ]]; then
+    echo "Invalid type. Please use one of 'feature', 'fixes', 'refactor', 'docs'."
+    return 1
+  fi
 
-
-  # Prompt the user for commit type
+  # Prompt the user for branch name
   echo "Enter branch name:"
   read name
 
+  echo "Creating $1/$name branch"
   # Checkout the dev branch
   git checkout dev
 
   # Create a new branch with the provided prefix and switch to it
-  git checkout -b ${$1}/${name}
+  git checkout -b "$1/$name"
 
   # Push the branch to the remote repository
-  git push -u origin ${$1}/${name}
+  git push -u origin "$1/$name"
 }
 
 function commit_push_merge_dev() {
