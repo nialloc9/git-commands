@@ -22,11 +22,10 @@ function create_docs_branch() {
 function create_branch() {
 
   # Prompt the user for branch prefix
-  echo "Enter branch type (feature, fixes, refactor, docs):"
-  read prefix
+  prefix = $1
 
   # Check if the type is one of the allowed types
-    if [[ "$prefix" != "feature" && "$prefix" != "fixes" && "$prefix" != "refactor" && "$prefix" != "docs" ]]; then
+    if [[ "$prefix" != "feature" && "$1" != "fixes" && "$1" != "refactor" && "$1" != "docs" ]]; then
         echo "Invalid type. Please use one of 'feature', 'fixes', 'refactor', 'docs'."
         return 1
     fi
@@ -40,10 +39,10 @@ function create_branch() {
   git checkout dev
 
   # Create a new branch with the provided prefix and switch to it
-  git checkout -b ${prefix}/${name}
+  git checkout -b ${$1}/${name}
 
   # Push the branch to the remote repository
-  git push -u origin ${prefix}/${name}
+  git push -u origin ${$1}/${name}
 }
 
 function commit_push_merge_dev() {
