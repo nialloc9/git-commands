@@ -103,3 +103,13 @@ commit_push_merge_dev
 Ensure you're in a Git repository, checkout the 'dev' branch, and pull the latest changes. Then, checkout the 'main' branch and merge the changes from 'dev'.
 
 \*\*Usage
+
+### release()
+
+Release current branch into an env
+
+**Usage:**
+
+```bash
+release
+```

@@ -104,3 +104,28 @@ function git_commit() {
     git commit -m "${type}:${message}"
     git push
 }
+
+function release() {
+  echo "Release to: (main, dev)"
+  read type
+
+  # Store the current branch name
+  current_branch=$(git rev-parse --abbrev-ref HEAD)
+
+  # Commit all changes in the current branch
+  git add .
+  git commit -m "release: release $current_branch to $type"
+  git push
+
+  # Push the current branch to remote
+  git push origin $current_branch
+
+  # Checkout the dev branch
+  git checkout $type
+
+  # Merge changes from the current branch into dev
+  git merge $current_branch
+
+  # Push merged changes in dev to remote
+  git push origin $type
+}
