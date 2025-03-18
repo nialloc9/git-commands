@@ -1,3 +1,5 @@
+GIT_ACCOUNT_IDENTIFIER=nialloc9
+
 function create_feature_branch() {
   create_branch "feature"
 }
@@ -90,7 +92,7 @@ function release() {
 
     PROJECT_NAME=$(basename -s .git `git config --get remote.origin.url`)
 
-    echo "Create PR: https://github.com/nialloc9/$PROJECT_NAME/pull/new/$RELEASE_BRANCH"
+    echo "Create PR: https://github.com/$GIT_ACCOUNT_IDENTIFIER/$PROJECT_NAME/pull/new/$RELEASE_BRANCH"
 }
 
 function release_dev() {
@@ -107,5 +109,5 @@ function release_dev() {
 
     git push --set-upstream origin $RELEASE_BRANCH
 
-    echo "Create PR: https://github.com/nialloc9/$PROJECT_NAME/pull/new/$RELEASE_BRANCH"
+    echo "Create PR: https://github.com/$GIT_ACCOUNT_IDENTIFIER/$PROJECT_NAME/pull/new/$RELEASE_BRANCH"
 }

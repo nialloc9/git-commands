@@ -4,6 +4,8 @@ A collection of shell functions designed to streamline various Git tasks, from b
 
 ### Instructions to Add Functions to Zsh Profile
 
+0. Change GIT_ACCOUNT_IDENTIFIER to your account
+
 1. Open your Zsh configuration file:
 
 \```bash
