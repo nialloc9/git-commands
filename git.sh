@@ -1,4 +1,3 @@
-# Function to create a feature branch
 function create_feature_branch() {
   create_branch "feature"
 }
@@ -42,52 +41,15 @@ function create_branch() {
   git push -u origin "$1/$name"
 }
 
-function commit_push_merge_dev() {
-  # Store the current branch name
-  current_branch=$(git rev-parse --abbrev-ref HEAD)
-
-  # Commit all changes in the current branch
-  git_commit
-
-  # Push the current branch to remote
-  git push origin $current_branch
-
-  # Checkout the dev branch
-  git checkout dev
-
-  # Merge changes from the current branch into dev
-  git merge $current_branch
-
-  # Push merged changes in dev to remote
-  git push origin dev
-}
-
-function merge_dev_into_main() {
-  # Ensure you're in a git repository
-  if [ ! -d .git ]; then
-    echo "Error: Not in a git repository."
-    return 1
-  fi
-
-  # Checkout the dev branch
-  git checkout dev
-
-  # Pull the latest changes from the remote's dev branch
-  git pull origin dev
-
-  # Checkout the main branch
-  git checkout main
-
-  # Merge the latest changes from dev into main
-  git merge dev
-
-  git push origin main
-}
 
 function git_commit() {
     # Prompt the user for commit type
-    echo "Enter commit type (feat, fixes, refactor):"
+    echo "Enter commit type (feat, fixes, refactor, none):"
     read type
+
+    if [[ "$type" = "none" ]] then
+        return 0
+    fi
 
     # Check if the type is one of the allowed types
     if [[ "$type" != "feat" && "$type" != "fixes" && "$type" != "refactor" ]] then
@@ -106,26 +68,44 @@ function git_commit() {
 }
 
 function release() {
-  echo "Release to: (main, dev)"
-  read type
+    # Ensure we are in a git repository
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        echo "Error: Not inside a git repository."
+        return 1
+    fi
 
-  # Store the current branch name
-  current_branch=$(git rev-parse --abbrev-ref HEAD)
+    # Checkout dev branch
+    git checkout dev && git pull origin dev
 
-  # Commit all changes in the current branch
-  git add .
-  git commit -m "release: release $current_branch to $type"
-  git push
+    # Get current date-time in DD-MM-YYYY-HH:MM format
+    TIMESTAMP=$(date +"%d-%m-%Y-%H-%M")
 
-  # Push the current branch to remote
-  git push origin $current_branch
+    # Create new branch with the release timestamp
+    RELEASE_BRANCH="release/$TIMESTAMP"
+    git checkout -b "$RELEASE_BRANCH"
 
-  # Checkout the dev branch
-  git checkout $type
+    echo "Switched to new release branch: $RELEASE_BRANCH"
 
-  # Merge changes from the current branch into dev
-  git merge $current_branch
+    git push --set-upstream origin $RELEASE_BRANCH
 
-  # Push merged changes in dev to remote
-  git push origin $type
+    PROJECT_NAME=$(basename -s .git `git config --get remote.origin.url`)
+
+    echo "Create PR: https://github.com/nialloc9/$PROJECT_NAME/pull/new/$RELEASE_BRANCH"
+}
+
+function release_dev() {
+    # Ensure we are in a git repository
+    if ! git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+        echo "Error: Not inside a git repository."
+        return 1
+    fi
+
+    git_commit
+
+    RELEASE_BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    PROJECT_NAME=$(basename -s .git `git config --get remote.origin.url`)
+
+    git push --set-upstream origin $RELEASE_BRANCH
+
+    echo "Create PR: https://github.com/nialloc9/$PROJECT_NAME/pull/new/$RELEASE_BRANCH"
 }
