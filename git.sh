@@ -36,6 +36,8 @@ function create_branch() {
   # Checkout the dev branch
   git checkout dev
 
+  git pull origin dev
+  
   # Create a new branch with the provided prefix and switch to it
   git checkout -b "$1/$name"
 
@@ -43,8 +45,24 @@ function create_branch() {
   git push -u origin "$1/$name"
 }
 
+# Function to update current branch with latest dev changes
+function update_from_dev() {
+    # Store the current branch name
+    CURRENT_BRANCH=$(git branch --show-current)
+    
+    # Checkout dev and pull latest changes
+    git checkout dev
+    git pull origin dev
+    
+    # Return to original branch and merge dev
+    git checkout "$CURRENT_BRANCH"
+    git merge dev
+    
+    echo "Updated $CURRENT_BRANCH with latest changes from dev"
+}
 
 function git_commit() {
+
     # Prompt the user for commit type
     echo "Enter commit type (feat, fixes, refactor, none):"
     read type
@@ -52,6 +70,8 @@ function git_commit() {
     if [[ "$type" = "none" ]] then
         return 0
     fi
+
+    update_from_dev
 
     # Check if the type is one of the allowed types
     if [[ "$type" != "feat" && "$type" != "fixes" && "$type" != "refactor" ]] then
