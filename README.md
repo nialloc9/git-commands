@@ -8,9 +8,9 @@ A collection of shell functions designed to streamline various Git tasks, from b
 
 1. Open your Zsh configuration file:
 
-\```bash
+```bash
 nano ~/.zshrc
-\```
+```
 
 2. Scroll to the end of the file, and paste the provided bash functions.
 
@@ -18,37 +18,19 @@ nano ~/.zshrc
 
 4. Reload your Zsh configuration:
 
-\```bash
+```bash
 source ~/.zshrc
-\```
+```
 
 Now, you should have access to the functions directly from your terminal.
 
-### create_feature_branch()
+### Environment Variables
 
-Create a new feature branch based on the 'dev' branch.
+Set `DEV_BRANCH` to customize the development branch (defaults to 'dev'):
 
-**Usage:**
-\```bash
-create_feature_branch "new-feature-name"
-\```
-
-### create_fixes_branch()
-
-...
-
-...
-
-...
-
-## Table of Contents
-
--   [1. create_feature_branch()](#create_feature_branch)
--   [2. create_fixes_branch()](#create_fixes_branch)
--   [3. create_refactor_branch()](#create_refactor_branch)
--   [4. create_docs_branch()](#create_docs_branch)
--   [5. commit_push_merge_dev()](#commit_push_merge_dev)
--   [6. merge_dev_into_main()](#merge_dev_into_main)
+```bash
+export DEV_BRANCH="develop"
+```
 
 ### create_feature_branch()
 
@@ -90,6 +72,10 @@ Create a new documentation branch based on the 'dev' branch.
 create_docs_branch "documentation-update-name"
 ```
 
+### commit_push_merge_dev()
+
+Commit, push, and create link to create PR.
+
 **Usage:**
 
 ```bash
@@ -98,16 +84,30 @@ commit_push_merge_dev
 
 ### release_dev()
 
-Commit, push, and create link to create pr.
+Commit, push, and create link to create PR.
 
-\*\*Usage
+**Usage:**
+
+```bash
+release_dev
+```
 
 ### release()
 
-Release current branch into an env
+Release current branch into an env.
 
 **Usage:**
 
 ```bash
 release
 ```
+
+## Table of Contents
+
+- [1. create_feature_branch()](#create_feature_branch)
+- [2. create_fixes_branch()](#create_fixes_branch)
+- [3. create_refactor_branch()](#create_refactor_branch)
+- [4. create_docs_branch()](#create_docs_branch)
+- [5. commit_push_merge_dev()](#commit_push_merge_dev)
+- [6. release_dev()](#release_dev)
+- [7. release()](#release)

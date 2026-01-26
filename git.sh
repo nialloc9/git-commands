@@ -1,4 +1,5 @@
 GIT_ACCOUNT_IDENTIFIER=nialloc9
+DEV_BRANCH=dev
 
 function create_feature_branch() {
   create_branch "feature"
@@ -34,9 +35,9 @@ function create_branch() {
 
   echo "Creating $1/$name branch"
   # Checkout the dev branch
-  git checkout dev
+  git checkout $DEV_BRANCH
 
-  git pull origin dev
+  git pull origin $DEV_BRANCH
   
   # Create a new branch with the provided prefix and switch to it
   git checkout -b "$1/$name"
@@ -49,16 +50,16 @@ function create_branch() {
 function update_from_dev() {
     # Store the current branch name
     CURRENT_BRANCH=$(git branch --show-current)
-    
-    # Checkout dev and pull latest changes
-    git checkout dev
-    git pull origin dev
-    
-    # Return to original branch and merge dev
+
+    # Checkout dev branch and pull latest changes
+    git checkout $DEV_BRANCH
+    git pull origin $DEV_BRANCH
+
+    # Return to original branch and merge dev branch changes
     git checkout "$CURRENT_BRANCH"
-    git merge dev
-    
-    echo "Updated $CURRENT_BRANCH with latest changes from dev"
+    git merge $DEV_BRANCH  
+
+    echo "Updated $CURRENT_BRANCH with latest changes from $DEV_BRANCH"
 }
 
 function git_commit() {
@@ -97,7 +98,7 @@ function release() {
     fi
 
     # Checkout dev branch
-    git checkout dev && git pull origin dev
+    git checkout $DEV_BRANCH && git pull origin $DEV_BRANCH
 
     # Get current date-time in DD-MM-YYYY-HH:MM format
     TIMESTAMP=$(date +"%d-%m-%Y-%H-%M")
