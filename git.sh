@@ -20,12 +20,32 @@ function create_docs_branch() {
   create_branch "docs"
 }
 
+# Function to create a poc branch with incrementing number
+function create_poc_branch() {
+
+  # Find the latest poc branch number from local and remote branches
+  LAST_POC_NUMBER=$(git branch -a | grep -E "poc-[0-9]+/" | sed -E "s/.*poc-([0-9]+)\/.*/\1/" | sort -n | tail -n 1)
+
+  if [[ -z "$LAST_POC_NUMBER" ]]; then
+    NEXT_POC_NUMBER=1
+  else
+    NEXT_POC_NUMBER=$((LAST_POC_NUMBER + 1))
+  fi
+
+  create_branch "poc-${NEXT_POC_NUMBER}"
+}
+
+# Function to create a docs branch
+function create_docs_branch() {
+  create_branch "docs"
+}
+
 # Helper function to create a branch
 function create_branch() {
 
   # Check if the type is one of the allowed types
-  if [[ "$1" != "feature" && "$1" != "fixes" && "$1" != "refactor" && "$1" != "docs" ]]; then
-    echo "Invalid type. Please use one of 'feature', 'fixes', 'refactor', 'docs'."
+  if [[ "$1" != "feature" && "$1" != "fixes" && "$1" != "refactor" && "$1" != "docs" && "$1" != poc-* ]]; then
+    echo "Invalid type. Please use one of 'feature', 'fixes', 'refactor', 'docs', or 'poc-<number>'."
     return 1
   fi
 

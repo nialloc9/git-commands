@@ -72,6 +72,16 @@ Create a new documentation branch based on the 'dev' branch.
 create_docs_branch "documentation-update-name"
 ```
 
+### create_poc_branch()
+
+Create a new poc branch based on the 'dev' branch.
+
+**Usage:**
+
+```bash
+create_poc_branch "integrate-fivetran"
+```
+
 ### commit_push_merge_dev()
 
 Commit, push, and create link to create PR.
