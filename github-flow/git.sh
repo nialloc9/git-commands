@@ -57,11 +57,12 @@ function prompt_for_branch_name() {
     return 0
   fi
 
-  read -r -p "Enter branch name: " provided_branch_name
+  echo -n "Enter branch name: "
+  read -r provided_branch_name
   echo "$provided_branch_name"
 }
 
-function start_branch() {
+function create_feature_branch() {
   local branch_name="$1"
 
   ensure_git_repository || return 1
@@ -77,6 +78,22 @@ function start_branch() {
   git push -u origin "$branch_name"
 }
 
+function get_release_branch_name() {
+  echo "release/$(date +%Y-%m-%d-%H-%M-%S)"
+}
+
+function create_release() {
+  local release_branch
+
+  ensure_git_repository || return 1
+  release_branch=$(get_release_branch_name) || return 1
+
+  echo "Creating $release_branch from $DEFAULT_BRANCH"
+  checkout_and_update_default_branch || return 1
+  git checkout -b "$release_branch" || return 1
+  git push -u origin "$release_branch"
+}
+
 function sync_current_branch_with_default() {
   local current_branch
 
@@ -90,12 +107,13 @@ function sync_current_branch_with_default() {
   echo "Updated $current_branch with latest changes from $DEFAULT_BRANCH"
 }
 
-function commit_and_push_with_type() {
+function create_commit() {
   local commit_type commit_message
 
   ensure_git_repository || return 1
 
-  read -r -p "Enter commit type (feat, fix, refactor, docs, chore, none): " commit_type
+  echo -n "Enter commit type (feat, fix, refactor, docs, chore, none): "
+  read -r commit_type
   if [[ "$commit_type" == "none" ]]; then
     return 0
   fi
@@ -107,7 +125,8 @@ function commit_and_push_with_type() {
 
   sync_current_branch_with_default || return 1
 
-  read -r -p "Enter commit message: " commit_message
+  echo -n "Enter commit message: "
+  read -r commit_message
 
   git add .
   git commit -m "${commit_type}: ${commit_message}"
@@ -124,17 +143,4 @@ function push_branch_and_print_pr_url() {
 
   git push --set-upstream origin "$branch_name"
   echo "Create PR: https://$github_host/$repository_path/pull/new/$branch_name"
-}
-
-# Backward-compatible aliases
-function create_feature_branch() {
-  start_branch "$1"
-}
-
-function update_from_main() {
-  sync_current_branch_with_default
-}
-
-function release_dev() {
-  push_branch_and_print_pr_url
 }

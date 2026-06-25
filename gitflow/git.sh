@@ -75,7 +75,8 @@ function prompt_for_branch_suffix() {
     return 0
   fi
 
-  read -r -p "Enter branch name: " provided_suffix
+  echo -n "Enter branch name: "
+  read -r provided_suffix
   echo "$provided_suffix"
 }
 
@@ -101,19 +102,31 @@ function create_gitflow_branch() {
   git push -u origin "$full_branch_name"
 }
 
-function start_feature_branch() {
+function create_feature_branch() {
   create_gitflow_branch "feature" "$DEVELOP_BRANCH" "$1"
 }
 
-function start_release_branch() {
-  create_gitflow_branch "release" "$DEVELOP_BRANCH" "$1"
-}
-
-function start_hotfix_branch() {
+function create_hotfix_branch() {
   create_gitflow_branch "hotfix" "$MAIN_BRANCH" "$1"
 }
 
-function sync_current_branch_with_develop() {
+function get_next_release_branch_name() {
+  echo "release/$(date +%Y-%m-%d-%H-%M-%S)"
+}
+
+function create_release() {
+  local release_branch
+
+  ensure_git_repository || return 1
+  release_branch=$(get_next_release_branch_name) || return 1
+
+  echo "Creating $release_branch from $DEVELOP_BRANCH"
+  checkout_and_update_branch "$DEVELOP_BRANCH" || return 1
+  git checkout -b "$release_branch" || return 1
+  git push -u origin "$release_branch"
+}
+
+function sync_current_branch_with_default() {
   local current_branch
 
   ensure_git_repository || return 1
@@ -126,12 +139,13 @@ function sync_current_branch_with_develop() {
   echo "Updated $current_branch with latest changes from $DEVELOP_BRANCH"
 }
 
-function commit_and_push_with_type() {
+function create_commit() {
   local commit_type commit_message
 
   ensure_git_repository || return 1
 
-  read -r -p "Enter commit type (feat, fix, refactor, docs, chore, none): " commit_type
+  echo -n "Enter commit type (feat, fix, refactor, docs, chore, none): "
+  read -r commit_type
   if [[ "$commit_type" == "none" ]]; then
     return 0
   fi
@@ -141,42 +155,17 @@ function commit_and_push_with_type() {
     return 1
   fi
 
-  sync_current_branch_with_develop || return 1
+  sync_current_branch_with_default || return 1
 
-  read -r -p "Enter commit message: " commit_message
+  echo -n "Enter commit message: "
+  read -r commit_message
 
   git add .
   git commit -m "${commit_type}: ${commit_message}"
   git push
 }
 
-function release_current_branch() {
+function create_dev_release() {
   ensure_git_repository || return 1
   push_branch_and_print_pr_url
-}
-
-# Backward-compatible wrappers (legacy names)
-function create_feature_branch() {
-  start_feature_branch "$1"
-}
-
-function create_fixes_branch() {
-  echo "Deprecated: use start_hotfix_branch instead."
-  start_hotfix_branch "$1"
-}
-
-function update_from_dev() {
-  sync_current_branch_with_develop
-}
-
-function git_commit() {
-  commit_and_push_with_type
-}
-
-function release() {
-  start_release_branch "$1"
-}
-
-function release_dev() {
-  release_current_branch
 }

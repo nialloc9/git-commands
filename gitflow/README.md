@@ -1,27 +1,41 @@
-# gitflow Folder
+# Gitflow
 
-This folder contains Gitflow-specific automation scripts.
+Shell functions and make targets for a standard Gitflow process with `develop`, `release`, and `hotfix` branches.
 
-## Folder Contents
+## Usage
 
-- `git.sh`: Gitflow shell functions (feature/release/hotfix, sync, commit, PR URL)
-- `Makefile`: Make targets that wrap the shell functions in `git.sh`
-- `README.md`: This documentation
+### Option 1: Source in your shell profile
 
-## Quick Start From This Folder
-
-Run commands from this directory:
+Add to your `~/.zshrc` or `~/.bashrc`:
 
 ```bash
-cd gitflow
-source ./git.sh
+source "$HOME/projects/pensieve/git-commands/gitflow/git.sh"
 ```
 
-Or use make targets directly:
+Then use commands directly from any repo:
 
 ```bash
-cd gitflow
+create_feature_branch "my-feature"
+create_commit
+```
+
+### Option 2: Copy into your repo
+
+Copy `git.sh` and `Makefile` into your project and use make targets:
+
+```bash
 make help
+make feature NAME=my-feature
+make commit
+```
+
+### Option 3: Claude Code skill
+
+Use the `/git` slash command in Claude Code. See the [root README](../README.md#option-3-claude-code-skill) for setup instructions.
+
+```
+/git create a feature branch called my-feature
+/git commit this as a fix
 ```
 
 ## Configuration
@@ -47,82 +61,69 @@ Defaults:
 - `DEVELOP_BRANCH=develop`
 - `MAIN_BRANCH=main`
 
-## Standard Gitflow Commands
+## Commands
 
-### start_feature_branch
+### create_feature_branch
 
 Creates `feature/<name>` from `DEVELOP_BRANCH`.
 
 ```bash
-start_feature_branch "my-feature"
+create_feature_branch "my-feature"
 ```
 
-### start_release_branch
-
-Creates `release/<name>` from `DEVELOP_BRANCH`.
-
-```bash
-start_release_branch "1.4.0"
-```
-
-### start_hotfix_branch
+### create_hotfix_branch
 
 Creates `hotfix/<name>` from `MAIN_BRANCH`.
 
 ```bash
-start_hotfix_branch "1.4.1-critical-fix"
+create_hotfix_branch "1.4.1-critical-fix"
 ```
 
-### sync_current_branch_with_develop
+### create_release
+
+Creates `release/YYYY-MM-DD-HH-MM-SS` from `DEVELOP_BRANCH`.
+
+```bash
+create_release
+```
+
+### sync_current_branch_with_default
 
 Updates your current branch by merging the latest `DEVELOP_BRANCH`.
 
 ```bash
-sync_current_branch_with_develop
+sync_current_branch_with_default
 ```
 
-### commit_and_push_with_type
+### create_commit
 
 Prompts for a Conventional Commit type (`feat`, `fix`, `refactor`, `docs`, `chore`) and message, syncs with develop, commits, and pushes.
 
 ```bash
-commit_and_push_with_type
+create_commit
 ```
 
-### release_current_branch
+### create_dev_release
 
 Pushes the current branch and prints a GitHub PR URL.
 
 ```bash
-release_current_branch
+create_dev_release
 ```
 
 ## Makefile Commands
 
-You can run the same workflow with `make`:
-
 ```bash
 make help
 make feature NAME=my-feature
-make release-branch NAME=1.4.0
+make release
 make hotfix NAME=1.4.1-critical-fix
 make sync
 make commit
-make pr
+make dev-release
 ```
 
 ## Notes
 
 - The PR URL is derived from `remote.origin.url` and supports both GitHub.com and GitHub Enterprise.
 - `DEVELOP_BRANCH` and `MAIN_BRANCH` default to `develop` and `main` if not set.
-
-## Backward Compatibility
-
-Legacy names are still available as wrappers:
-
-- `create_feature_branch`
-- `create_fixes_branch` (deprecated, now maps to hotfix)
-- `update_from_dev`
-- `git_commit`
-- `release`
-- `release_dev`

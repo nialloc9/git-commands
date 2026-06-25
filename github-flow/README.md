@@ -1,25 +1,41 @@
-# github-flow Folder
+# GitHub Flow
 
-This folder contains GitHub Flow-specific automation scripts.
+Shell functions and make targets for a lightweight GitHub Flow process.
 
-## Folder Contents
+## Usage
 
-- `git.sh`: GitHub Flow shell functions (start branch, sync, commit, PR URL)
-- `Makefile`: Make targets that wrap the shell functions in `git.sh`
-- `README.md`: This documentation
+### Option 1: Source in your shell profile
 
-## Quick Start From This Folder
+Add to your `~/.zshrc` or `~/.bashrc`:
 
 ```bash
-cd github-flow
-source ./git.sh
+source "$HOME/projects/pensieve/git-commands/github-flow/git.sh"
 ```
 
-Or use make targets directly:
+Then use commands directly from any repo:
 
 ```bash
-cd github-flow
+create_feature_branch "my-change"
+create_commit
+```
+
+### Option 2: Copy into your repo
+
+Copy `git.sh` and `Makefile` into your project and use make targets:
+
+```bash
 make help
+make feature NAME=my-change
+make commit
+```
+
+### Option 3: Claude Code skill
+
+Use the `/git` slash command in Claude Code. See the [root README](../README.md#option-3-claude-code-skill) for setup instructions.
+
+```
+/git create a feature branch called my-change
+/git commit this as a fix
 ```
 
 ## Configuration
@@ -34,14 +50,22 @@ Defaults:
 
 PR links are generated from `remote.origin.url`, so both GitHub.com and GitHub Enterprise remotes are supported automatically.
 
-## Standard GitHub Flow Commands
+## Commands
 
-### start_branch
+### create_feature_branch
 
 Creates `<branch-name>` from `DEFAULT_BRANCH`.
 
 ```bash
-start_branch "my-change"
+create_feature_branch "my-change"
+```
+
+### create_release
+
+Creates `release/YYYY-MM-DD-HH-MM-SS` from `DEFAULT_BRANCH`.
+
+```bash
+create_release
 ```
 
 ### sync_current_branch_with_default
@@ -52,12 +76,12 @@ Updates your current branch by merging the latest `DEFAULT_BRANCH`.
 sync_current_branch_with_default
 ```
 
-### commit_and_push_with_type
+### create_commit
 
 Prompts for a Conventional Commit type (`feat`, `fix`, `refactor`, `docs`, `chore`) and message, syncs with default, commits, and pushes.
 
 ```bash
-commit_and_push_with_type
+create_commit
 ```
 
 ### push_branch_and_print_pr_url
@@ -72,7 +96,8 @@ push_branch_and_print_pr_url
 
 ```bash
 make help
-make start NAME=my-change
+make feature NAME=my-change
+make release
 make sync
 make commit
 make pr
